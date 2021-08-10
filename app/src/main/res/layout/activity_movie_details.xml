@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data class="MovieDetailsActivityBinding">
+
+        <variable
+            name="movie"
+            type="com.example.tmdb.model.Movie" />
 
     </data>
 
@@ -35,7 +40,8 @@
                         android:scaleType="centerCrop"
                         app:layout_collapseMode="parallax"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent"
+                        bind:posterPath="@{movie.posterPath}"/>
 
                 </RelativeLayout>
 
@@ -50,7 +56,10 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/content_movie_details" />
+        <include
+            android:id="@+id/second_layout"
+            bind:secondLayout="@{movie}"
+            layout="@layout/content_movie_details" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

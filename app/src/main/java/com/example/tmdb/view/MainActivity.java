@@ -2,6 +2,11 @@ package com.example.tmdb.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,12 +17,15 @@ import android.util.Log;
 
 import com.example.tmdb.R;
 import com.example.tmdb.adapter.MovieAdapter;
+import com.example.tmdb.databinding.MainActivityBinding;
 import com.example.tmdb.model.Movie;
 import com.example.tmdb.model.MoviesServerResponse;
 import com.example.tmdb.service.MovieDataService;
 import com.example.tmdb.service.RetrofitInstance;
+import com.example.tmdb.viewmodel.MainActivityViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,24 +34,28 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
+    
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    
     private ArrayList<Movie> movies;
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
+    private MainActivityViewModel mMainActivityViewModel;
+    private MainActivityBinding mMainActivityBinding;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        mMainActivityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        
+        mMainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        
         Objects.requireNonNull(getSupportActionBar()).setTitle("TMDB Popular Movies");
-
+        
         getPopularMovies();
         
-        mSwipeRefreshLayout = findViewById(R.id.sl_swipe_layout);
+        mSwipeRefreshLayout = mMainActivityBinding.slSwipeLayout;
         mSwipeRefreshLayout.setColorSchemeColors(R.color.colorAccent);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -52,59 +64,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     private void getPopularMovies() {
-
-        MovieDataService moviesData = RetrofitInstance.getRetrofit();
-
-        Call<MoviesServerResponse> popularMovies = moviesData.getPopularMovies(this.getString(R.string.api_key));
-        popularMovies.enqueue(new Callback<MoviesServerResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesServerResponse> call, @NonNull Response<MoviesServerResponse> response) {
-                //Success - Display Movies
-                MoviesServerResponse body = response.body();
-                if (response.code() == 200)
-                {
-                    if (body.getMovies() != null)
-                    {
-                        movies = (ArrayList<Movie>) body.getMovies();
         
-                        showInRecyclerView();
-                    }
-                }
-                else
-                {
-                    Log.d(TAG, "onResponse: " + response.raw());
-                }
-            }
-
+        mMainActivityViewModel.getAllMovies().observe(this, new Observer<List<Movie>>() {
             @Override
-            public void onFailure(@NonNull Call<MoviesServerResponse> call, @NonNull Throwable t) {
-                //Display Error
-                Log.d(TAG, "onFailure: " + t.getMessage());
+            public void onChanged(List<Movie> moviesFromLiveData) {
+                movies = (ArrayList<Movie>) moviesFromLiveData;
+                showInRecyclerView();
             }
         });
-
     }
-
+    
     private void showInRecyclerView() {
-
-        recyclerView = findViewById(R.id.rv_movies);
-
+        
+        recyclerView = mMainActivityBinding.rvMovies;
+        
         movieAdapter = new MovieAdapter(this, movies);
-
-        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         }
-        else {
+        else
+        {
             recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         }
-
+        
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(movieAdapter);
         movieAdapter.notifyDataSetChanged();
         
         mSwipeRefreshLayout.setRefreshing(false);
-
+        
     }
 }

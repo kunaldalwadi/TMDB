@@ -4,6 +4,10 @@
 
     <data>
 
+        <variable
+            name="secondLayout"
+            type="com.example.tmdb.model.Movie" />
+
     </data>
 
     <LinearLayout
@@ -16,21 +20,25 @@
 
         <TextView
             android:id="@+id/tv_movie_title"
+            android:text="@{secondLayout.originalTitle}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_movie_rating"
+            android:text="@{Double.toString(secondLayout.voteAverage)}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_movie_synopsis"
+            android:text="@{secondLayout.overview}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_movie_release_date"
+            android:text="@{secondLayout.releaseDate}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
