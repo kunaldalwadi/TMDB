@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<MoviesServerResponse> call, @NonNull Response<MoviesServerResponse> response) {
                 //Success - Display Movies
-
                 MoviesServerResponse body = response.body();
                 if (response.code() == 200)
                 {
@@ -104,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(movieAdapter);
         movieAdapter.notifyDataSetChanged();
+        
+        mSwipeRefreshLayout.setRefreshing(false);
 
     }
 }
