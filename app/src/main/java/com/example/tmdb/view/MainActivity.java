@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         getPopularMovies();
         
         mSwipeRefreshLayout = findViewById(R.id.sl_swipe_layout);
-        mSwipeRefreshLayout.setColorSchemeColors(R.color.colorPrimary);
+        mSwipeRefreshLayout.setColorSchemeColors(R.color.colorAccent);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
