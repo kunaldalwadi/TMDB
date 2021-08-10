@@ -2,15 +2,22 @@ package com.example.tmdb.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.tmdb.R;
+import com.example.tmdb.adapter.MovieAdapter;
+import com.example.tmdb.model.Movie;
 import com.example.tmdb.model.MoviesServerResponse;
 import com.example.tmdb.service.MovieDataService;
 import com.example.tmdb.service.RetrofitInstance;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -20,6 +27,10 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private ArrayList<Movie> movies;
+    private RecyclerView recyclerView;
+    private MovieAdapter movieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +52,12 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<MoviesServerResponse> call, @NonNull Response<MoviesServerResponse> response) {
                 //Success - Display Movies
 
-                if (response.isSuccessful())
+                MoviesServerResponse body = response.body();
+                if (body.getMovies() != null)
                 {
-                    MoviesServerResponse body = response.body();
+                    movies = (ArrayList<Movie>) body.getMovies();
 
-                    Log.d(TAG, "onResponse: ");
+                    showInRecyclerView();
                 }
             }
 
@@ -54,6 +66,25 @@ public class MainActivity extends AppCompatActivity {
                 //Display Error
             }
         });
+
+    }
+
+    private void showInRecyclerView() {
+
+        recyclerView = findViewById(R.id.rv_movies);
+
+        movieAdapter = new MovieAdapter(this, movies);
+
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        }
+        else {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        }
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(movieAdapter);
+        movieAdapter.notifyDataSetChanged();
 
     }
 }

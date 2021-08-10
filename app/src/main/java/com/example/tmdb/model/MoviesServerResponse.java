@@ -55,11 +55,11 @@ public class MoviesServerResponse implements Parcelable {
         this.page = page;
     }
 
-    public List<Movie> getResults() {
+    public List<Movie> getMovies() {
         return movies;
     }
 
-    public void setResults(List<Movie> results) {
+    public void setMovies(List<Movie> results) {
         this.movies = results;
     }
 
