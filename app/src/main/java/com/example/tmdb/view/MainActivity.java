@@ -20,6 +20,7 @@ import com.example.tmdb.service.RetrofitInstance;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Movie> movies;
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle("TMDB Popular Movies");
 
         getPopularMovies();
+        
+        mSwipeRefreshLayout = findViewById(R.id.sl_swipe_layout);
+        mSwipeRefreshLayout.setColorSchemeColors(R.color.colorPrimary);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getPopularMovies();
+            }
+        });
     }
 
     private void getPopularMovies() {
@@ -53,17 +64,25 @@ public class MainActivity extends AppCompatActivity {
                 //Success - Display Movies
 
                 MoviesServerResponse body = response.body();
-                if (body.getMovies() != null)
+                if (response.code() == 200)
                 {
-                    movies = (ArrayList<Movie>) body.getMovies();
-
-                    showInRecyclerView();
+                    if (body.getMovies() != null)
+                    {
+                        movies = (ArrayList<Movie>) body.getMovies();
+        
+                        showInRecyclerView();
+                    }
+                }
+                else
+                {
+                    Log.d(TAG, "onResponse: " + response.raw());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<MoviesServerResponse> call, @NonNull Throwable t) {
                 //Display Error
+                Log.d(TAG, "onFailure: " + t.getMessage());
             }
         });
 
