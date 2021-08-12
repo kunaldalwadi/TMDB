@@ -11,5 +11,9 @@ public interface MovieDataService {
 //https://api.themoviedb.org/3/movie/popular?api_key=b133c1180758351bf9a6631f15a7457f&language=en-US&page=1
     @GET("3/movie/popular")
     Call<MoviesServerResponse> getPopularMovies(@Query("api_key")String apiKey);
+    
+    
+    @GET("3/movie/popular")
+    Call<MoviesServerResponse> getPopularMoviesWithPaging(@Query("api_key")String apiKey, @Query("page")int page);
 
 }
