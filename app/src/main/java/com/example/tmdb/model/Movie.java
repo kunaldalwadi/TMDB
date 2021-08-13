@@ -12,9 +12,11 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 
 public class Movie extends BaseObservable implements Parcelable {
 
@@ -272,5 +274,20 @@ public class Movie extends BaseObservable implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+
+
+    public static final DiffUtil.ItemCallback<Movie> MOVIE_ITEM_CALLBACK = new DiffUtil.ItemCallback<Movie>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Movie oldItem, @NonNull Movie newItem) {
+            return oldItem.id == newItem.id;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Movie oldItem, @NonNull Movie newItem) {
+            return true;
+        }
+    };
+
 
 }

@@ -16,17 +16,19 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
+public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MovieViewHolder> {
 
     private Context context;
 
-    private ArrayList<Movie> movieArrayList;
+//    private ArrayList<Movie> movieArrayList;
 
-    public MovieAdapter(Context context, ArrayList<Movie> movieArrayList) {
+    public MovieAdapter(Context context){//, ArrayList<Movie> movieArrayList) {
+        super(Movie.MOVIE_ITEM_CALLBACK);
         this.context = context;
-        this.movieArrayList = movieArrayList;
+//        this.movieArrayList = movieArrayList;
     }
 
     @NonNull
@@ -41,14 +43,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
     
-        Movie movie = movieArrayList.get(position);
+//        Movie movie = movieArrayList.get(position);
+        Movie movie = getItem(position);
         holder.mMovieListItemBinding.setMovie(movie);
     }
 
-    @Override
-    public int getItemCount() {
-        return movieArrayList.size();
-    }
+//    @Override
+//    public int getItemCount() {
+//        return movieArrayList.size();
+//    }
 
     
     
@@ -68,8 +71,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     
                     if (position != RecyclerView.NO_POSITION)
                     {
-                        Movie selectedMovie = movieArrayList.get(position);
-    
+//                        Movie selectedMovie = movieArrayList.get(position);
+                        Movie selectedMovie = getItem(position);
+
                         Intent intent = new Intent(context, MovieDetailsActivity.class);
                         intent.putExtra("movie", selectedMovie);
                         context.startActivity(intent);

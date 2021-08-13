@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     
     private static final String TAG = MainActivity.class.getSimpleName();
     
-    private ArrayList<Movie> movies;
+//    private ArrayList<Movie> movies;
+    private PagedList<Movie> movies;
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -67,20 +69,30 @@ public class MainActivity extends AppCompatActivity {
     
     private void getPopularMovies() {
         
-        mMainActivityViewModel.getAllMovies().observe(this, new Observer<List<Movie>>() {
+//        mMainActivityViewModel.getAllMovies().observe(this, new Observer<List<Movie>>() {
+//            @Override
+//            public void onChanged(List<Movie> moviesFromLiveData) {
+//                movies = (ArrayList<Movie>) moviesFromLiveData;
+//                showInRecyclerView();
+//            }
+//        });
+
+        mMainActivityViewModel.getmMoviesPagedList().observe(this, new Observer<PagedList<Movie>>() {
             @Override
-            public void onChanged(List<Movie> moviesFromLiveData) {
-                movies = (ArrayList<Movie>) moviesFromLiveData;
+            public void onChanged(PagedList<Movie> moviesFromLiveData) {
+                movies = moviesFromLiveData;
                 showInRecyclerView();
             }
         });
+
     }
     
     private void showInRecyclerView() {
         
         recyclerView = mMainActivityBinding.rvMovies;
         
-        movieAdapter = new MovieAdapter(this, movies);
+        movieAdapter = new MovieAdapter(this);
+        movieAdapter.submitList(movies);
         
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
